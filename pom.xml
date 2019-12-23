@@ -12,6 +12,7 @@
     <modules>
         <module>commons-core</module>
         <module>commandbus-synchronous-inmemory</module>
+        <module>eventbus-synchronous-inmemory</module>
     </modules>
 
     <properties>
