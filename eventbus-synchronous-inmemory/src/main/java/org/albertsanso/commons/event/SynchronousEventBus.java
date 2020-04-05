@@ -2,17 +2,14 @@ package org.albertsanso.commons.event;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
 @Named
 public class SynchronousEventBus implements EventBus {
 
-    private Map<String, DomainEventSubscriber> registry;
+    private Map<String, List<DomainEventSubscriber>> registry;
 
     @Inject
     public SynchronousEventBus(List<DomainEventSubscriber<? extends DomainEvent>> subscriberList) {
@@ -24,18 +21,26 @@ public class SynchronousEventBus implements EventBus {
 
     @Override
     public void publish(DomainEvent domainEvent) {
-        DomainEventSubscriber subscriber = registry.get(domainEvent.getClass().getName());
-        if (!Objects.isNull(subscriber)) {
-            executeInmediatily(domainEvent, subscriber);
+        List<DomainEventSubscriber> subscriberList = registry.get(domainEvent.getClass().getName());
+        for (DomainEventSubscriber subscriber : subscriberList) {
+            if (!Objects.isNull(subscriber)) {
+                executeInmediatily(domainEvent, subscriber);
+            }
         }
     }
 
     @Override
     public void registerSubscriber(DomainEventSubscriber handler) {
+        List<DomainEventSubscriber> domainEventSubscribers;
+
         if (registry.containsKey(handler.handles().getName())) {
-            throw new IllegalStateException("Event registered yet!");
+            domainEventSubscribers = registry.get(handler.handles().getName());
         }
-        registry.put(handler.handles().getName(), handler);
+        else {
+            domainEventSubscribers = new ArrayList<>();
+            registry.put(handler.handles().getName(), domainEventSubscribers);
+        }
+        domainEventSubscribers.add(handler);
     }
 
     private void executeInmediatily(DomainEvent domainEvent, DomainEventSubscriber domainEventSubscriber) {
