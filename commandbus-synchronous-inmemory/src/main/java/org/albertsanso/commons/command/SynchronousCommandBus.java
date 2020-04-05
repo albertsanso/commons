@@ -21,7 +21,7 @@ public class SynchronousCommandBus implements CommandBus {
     }
 
     @Override
-    public DomainCommandResponse publish(DomainCommand command) {
+    public DomainCommandResponse push(DomainCommand command) {
         DomainCommandHandler handler = registry.get(command.getClass().getName());
         return executeInmediatily(command, handler);
     }
