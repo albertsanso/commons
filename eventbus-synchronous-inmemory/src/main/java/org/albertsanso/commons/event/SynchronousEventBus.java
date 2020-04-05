@@ -21,10 +21,12 @@ public class SynchronousEventBus implements EventBus {
 
     @Override
     public void publish(DomainEvent domainEvent) {
-        List<DomainEventSubscriber> subscriberList = registry.get(domainEvent.getClass().getName());
-        for (DomainEventSubscriber subscriber : subscriberList) {
-            if (!Objects.isNull(subscriber)) {
-                executeInmediatily(domainEvent, subscriber);
+        if (registry.containsKey(domainEvent.getClass().getName())) {
+            List<DomainEventSubscriber> subscriberList = registry.get(domainEvent.getClass().getName());
+            for (DomainEventSubscriber subscriber : subscriberList) {
+                if (!Objects.isNull(subscriber)) {
+                    executeInmediatily(domainEvent, subscriber);
+                }
             }
         }
     }
