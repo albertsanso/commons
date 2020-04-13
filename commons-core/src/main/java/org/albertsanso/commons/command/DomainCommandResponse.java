@@ -1,8 +1,8 @@
 package org.albertsanso.commons.command;
 
 public class DomainCommandResponse {
-    private boolean success;
-    private Object response;
+    private final boolean success;
+    private final Object response;
 
     private DomainCommandResponse(boolean success, Object response) {
         this.success = success;
